@@ -1,1 +1,7 @@
 plotly==5.22.0
+streamlit
+pandas
+numpy
+plotly
+scikit-learn
+firebase-admin
