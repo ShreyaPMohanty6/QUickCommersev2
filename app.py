@@ -11,9 +11,7 @@ import streamlit as st
 
 warnings.filterwarnings("ignore")
 
-# ---------------------------------------------------------------------
-# App config
-# ---------------------------------------------------------------------
+
 st.set_page_config(
     page_title="🚀 Demand Forecast Dashboard",
     page_icon="🚀",
@@ -21,9 +19,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ---------------------------------------------------------------------
-# Styling
-# ---------------------------------------------------------------------
 st.markdown(
     """
 <style>
@@ -76,9 +71,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------
 FORECAST_HORIZON = 7
 EPS = 1e-9
 
@@ -114,9 +106,7 @@ STAGE2_MARKERS = {
     "lgb_h7",
 }
 
-# ---------------------------------------------------------------------
-# Optimization helpers
-# ---------------------------------------------------------------------
+
 def optimize_dtypes(df: pd.DataFrame) -> pd.DataFrame:
 
     float_cols = df.select_dtypes(include=["float64"]).columns
@@ -170,9 +160,6 @@ def parquet_columns(path: Path) -> list[str]:
         return list(pd.read_parquet(path).columns)
 
 
-# ---------------------------------------------------------------------
-# Discover parquet paths
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def discover_parquet_paths(base_dir: str = "."):
 
@@ -200,9 +187,6 @@ def discover_parquet_paths(base_dir: str = "."):
     return str(stage1_path), str(stage2_path)
 
 
-# ---------------------------------------------------------------------
-# Read Stage 1
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def read_stage1() -> pd.DataFrame:
 
@@ -253,10 +237,6 @@ def read_stage1() -> pd.DataFrame:
 
     return df
 
-
-# ---------------------------------------------------------------------
-# Read Stage 2
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def read_stage2() -> pd.DataFrame:
 
@@ -346,10 +326,6 @@ def read_stage2() -> pd.DataFrame:
 
     return long_df
 
-
-# ---------------------------------------------------------------------
-# Product stats
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def build_stage1_product_stats(
     stage1_df: pd.DataFrame,
@@ -447,9 +423,6 @@ def build_stage1_product_stats(
     return agg
 
 
-# ---------------------------------------------------------------------
-# Category stats
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def build_stage1_category_stats(
     stage1_df: pd.DataFrame,
@@ -498,9 +471,6 @@ def build_stage1_category_stats(
     return pd.DataFrame(rows)
 
 
-# ---------------------------------------------------------------------
-# Enrich Stage 2
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def enrich_stage2_with_stage1(
     stage2_long: pd.DataFrame,
@@ -534,9 +504,6 @@ def enrich_stage2_with_stage1(
     )
 
 
-# ---------------------------------------------------------------------
-# Surge products
-# ---------------------------------------------------------------------
 def calculate_surge_products(
     forecasts_df: pd.DataFrame,
     threshold: float = 3.0,
@@ -570,10 +537,6 @@ def calculate_surge_products(
         ascending=False,
     )
 
-
-# ---------------------------------------------------------------------
-# Stockout risk
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def calculate_stockout_risk(
     forecasts_df: pd.DataFrame,
@@ -682,9 +645,6 @@ def calculate_stockout_risk(
     )
 
 
-# ---------------------------------------------------------------------
-# Lost revenue
-# ---------------------------------------------------------------------
 def calculate_lost_revenue(
     stage1_df: pd.DataFrame,
     avg_price: float = 15.0,
@@ -719,10 +679,6 @@ def calculate_lost_revenue(
         ascending=False,
     )
 
-
-# ---------------------------------------------------------------------
-# Daily weather summary
-# ---------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def daily_weather_summary(
     stage1_df: pd.DataFrame,
@@ -752,9 +708,6 @@ def daily_weather_summary(
     return daily.sort_values("dt")
 
 
-# ---------------------------------------------------------------------
-# Scenario factors
-# ---------------------------------------------------------------------
 def compute_scenario_factors(
     stage1_df,
     category_stats,
@@ -882,9 +835,6 @@ def compute_scenario_factors(
     )
 
 
-# ---------------------------------------------------------------------
-# Main app
-# ---------------------------------------------------------------------
 def main():
 
     st.markdown(
@@ -922,9 +872,7 @@ def main():
             stage1_df
         )
 
-    # -------------------------------------------------------------
-    # Sidebar filters
-    # -------------------------------------------------------------
+   
     st.sidebar.title("🎛️ Control Panel")
 
     stores = sorted(
@@ -973,9 +921,6 @@ def main():
             == selected_category
         ]
 
-    # -------------------------------------------------------------
-    # Precompute once
-    # -------------------------------------------------------------
     risk_df = calculate_stockout_risk(
         filtered_forecasts
     )
@@ -1015,9 +960,6 @@ def main():
         )
     )
 
-    # -------------------------------------------------------------
-    # Tabs
-    # -------------------------------------------------------------
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
         [
             "📊 Demand Overview",
@@ -1029,9 +971,6 @@ def main():
         ]
     )
 
-    # =============================================================
-    # TAB 1
-    # =============================================================
     with tab1:
 
         st.header("📊 Next 7-Day Demand Forecast")
@@ -1119,9 +1058,7 @@ def main():
             use_container_width=True,
         )
 
-    # =============================================================
-    # TAB 2
-    # =============================================================
+
     with tab2:
 
         st.header(
@@ -1157,9 +1094,6 @@ def main():
             use_container_width=True,
         )
 
-    # =============================================================
-    # TAB 3
-    # =============================================================
     with tab3:
 
         st.header(
@@ -1195,9 +1129,7 @@ def main():
             use_container_width=True,
         )
 
-    # =============================================================
-    # TAB 4
-    # =============================================================
+
     with tab4:
 
         st.header(
@@ -1267,9 +1199,7 @@ def main():
             use_container_width=True,
         )
 
-    # =============================================================
-    # TAB 5
-    # =============================================================
+ 
     with tab5:
 
         st.header(
@@ -1303,9 +1233,6 @@ def main():
             use_container_width=True,
         )
 
-    # =============================================================
-    # TAB 6
-    # =============================================================
     with tab6:
 
         st.header(
